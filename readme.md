@@ -1,6 +1,11 @@
 PHP SHA-3 (Keccak) Extension
 ============================
 
+info:
+https://medium.com/@erinus/how-to-build-php-extension-on-windows-d1667290f809
+https://medium.com/@erinus/how-to-build-php-on-windows-a7ad0a87862a
+
+
 [![Build Status](https://travis-ci.org/strawbrary/php-sha3.svg?branch=master)](https://travis-ci.org/strawbrary/php-sha3)
 
 This PHP extension is a wrapper for the reference implementation of the SHA-3 (Keccak) hash function. SHA-3 is intended to replace older general use hash functions such as SHA-2 and MD5. The algorithm was designed by Guido Bertoni, Joan Daemen, Michaël Peeters and Gilles Van Assche.
