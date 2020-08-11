@@ -11,10 +11,9 @@
 #define PHP_SHA3_NAME "sha3"
 #define PHP_SHA3_VERSION "0.2.0"
 #define PHP_SHA3_STANDARD_VERSION "FIPS 202"
-#define PHP_SHA3_HASH_BIT_LENGTH 512
 
 zend_function_entry sha3_functions[] = {
-    PHP_FE(sha3, NULL)
+    PHP_FE(shake256, NULL)
     PHP_FE_END
 };
 
@@ -48,7 +47,7 @@ zend_module_entry sha3_module_entry = {
 ZEND_GET_MODULE(sha3)
 #endif
 
-PHP_FUNCTION(sha3)
+PHP_FUNCTION(shake256)
 {
 #if ZEND_MODULE_API_NO >= 20151012
     zend_long hashBitLength = 512;
@@ -66,15 +65,10 @@ PHP_FUNCTION(sha3)
         return;
     }
 
-    unsigned int capacity = PHP_SHA3_HASH_BIT_LENGTH * 2;
+    unsigned int capacity = hashBitLength * 2;
     unsigned int rate = SnP_width - capacity;
 
     hashByteLength = hashBitLength / 8;
-    BitSequence hashVal[PHP_SHA3_HASH_BIT_LENGTH / 8];
-
-
-
-
 
     unsigned char suffix = 0x06;
 
@@ -85,14 +79,19 @@ PHP_FUNCTION(sha3)
     // ---
 
 
+    BitSequence* hashVal = malloc(hashByteLength*sizeof(BitSequence));
+    // BitSequence hashVal[hashByteLength];
 
     Keccak_HashInstance hashInstance;
+
+    // HashReturn ret = Keccak_HashInitialize_SHAKE256(&hashInstance);
     HashReturn ret = Keccak_HashInitialize(&hashInstance, rate, capacity, hashBitLength, suffix);
 
     if (ret != SHA3_SUCCESS) {
         zend_error(E_WARNING, "Unsupported sha3() output length");
         RETURN_FALSE;
     }
+
 
     Keccak_HashUpdate(&hashInstance, (unsigned char *) data, dataByteLength * 8);
     Keccak_HashFinal(&hashInstance, hashVal);
