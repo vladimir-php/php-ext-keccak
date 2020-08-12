@@ -2,6 +2,7 @@
 #define PHP_SHA3_H
 
 PHP_FUNCTION(shake256);
+PHP_FUNCTION(keccakF1600Permute);
 
 extern zend_module_entry sha3_module_entry;
 #define phpext_sha3_ptr &sha3_module_entry

@@ -14,6 +14,7 @@
 
 zend_function_entry sha3_functions[] = {
     PHP_FE(shake256, NULL)
+    PHP_FE(keccakF1600Permute, NULL)
     PHP_FE_END
 };
 
@@ -113,4 +114,30 @@ PHP_FUNCTION(shake256)
         RETURN_STRINGL(hexDigest, hashByteLength * 2, 1);
 #endif
     }
+}
+
+
+
+PHP_FUNCTION(keccakF1600Permute)
+{
+#if ZEND_MODULE_API_NO >= 20151012
+    size_t dataByteLength;
+#else
+    int dataByteLength;
+#endif
+    char *data;
+
+    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &data, &dataByteLength) == FAILURE) {
+        return;
+    }
+
+    KeccakF1600_StatePermute(data);
+
+#if ZEND_MODULE_API_NO >= 20151012
+        RETVAL_STRINGL((char *)data, dataByteLength);
+#else
+        RETURN_STRINGL((char *)data, dataByteLength, 1);
+#endif
+
+
 }
