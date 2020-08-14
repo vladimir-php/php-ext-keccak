@@ -125,18 +125,26 @@ PHP_FUNCTION(keccakF1600Permute)
 #else
     int dataByteLength;
 #endif
-    char *data;
+    ALIGN unsigned char *data;
+    ALIGN unsigned char result[SnP_stateSizeInBytes];
 
     if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "s", &data, &dataByteLength) == FAILURE) {
         return;
     }
 
-    KeccakF1600_StatePermute(data);
+    KeccakF1600_Initialize();
+
+    // Copy string to result (do not modify arg pointer)
+    for (int i = 0; i < SnP_stateSizeInBytes; i++) {
+        result[i] = data[i];
+    }
+
+    KeccakF1600_StatePermute(result);
 
 #if ZEND_MODULE_API_NO >= 20151012
-        RETVAL_STRINGL((char *)data, dataByteLength);
+        RETVAL_STRINGL((ALIGN unsigned char *)result, dataByteLength);
 #else
-        RETURN_STRINGL((char *)data, dataByteLength, 1);
+        RETURN_STRINGL((ALIGN unsigned char *)result, dataByteLength, 1);
 #endif
 
 
